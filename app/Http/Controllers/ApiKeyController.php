@@ -25,16 +25,30 @@ class ApiKeyController extends Controller
             "apiKey" => $apiKeyDTO,
         ]);
     }
-    public function activateApiKey(Request $request): void
-    {
-        $api_id = $request->input("API_KEY");
-        $name = $request->input("API_NAME");
-        $this->apiKeyService->updateLastUsedValue($api_id, $name);
+    public function getApiKeyById(string $api_id) : JsonResponse{
+        $apiKeyDTO = $this->apiKeyService->getApiKeyById($api_id);
+        return response()->json([
+            "data" => $apiKeyDTO,
+        ]);
     }
-    public function deactivateApiKey(Request $request): void
+    public function getAllApiKeys() : JsonResponse{
+        $allApiKeys = $this->apiKeyService->getAllApiKeys();
+        return response()->json([
+            "data" => $allApiKeys,
+        ]);
+    }
+    public function getAllApiKeysForId(string $user_id) : JsonResponse{
+        $allApiKeys = $this->apiKeyService->getAllApiKeysForId($user_id);
+        return response()->json([
+            "data" => $allApiKeys,
+        ]);
+    }
+    public function activateApiKey(string $api_id): void
     {
-        $api_id = $request->input("API_KEY");
-        $name = $request->input("API_NAME");
-        $this->apiKeyService->deactivateApiKey($api_id, $name);
+        $this->apiKeyService->activateApiKey($api_id);
+    }
+    public function deactivateApiKey(string $api_id): void
+    {
+        $this->apiKeyService->deactivateApiKey($api_id);
     }
 }

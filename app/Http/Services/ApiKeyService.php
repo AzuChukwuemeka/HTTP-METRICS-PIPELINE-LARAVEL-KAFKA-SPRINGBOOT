@@ -18,25 +18,34 @@ class ApiKeyService
     {
         return $this->apiKeyRepository->createApiKey($user_id, $name);
     }
-
     /**
      * @throws ApiExpiredException
      */
-    public function checkValidityApiKey(string $api_id, string $name): void
+    public function checkValidityApiKey(string $api_id): void
     {
-        $apiKeyDTO = $this->apiKeyRepository->getApiKeyByIdAndName($api_id, $name);
+        $apiKeyDTO = $this->apiKeyRepository->getApiKeyById($api_id);
         if(now() > $apiKeyDTO->getExpiresAt()) throw new ApiExpiredException();
     }
-    public function updateLastUsedValue(string $api_id, $name): void
+    public function updateLastUsedValue(string $api_id): void
     {
-        $this->apiKeyRepository->updateLastUsedValue($api_id, $name);
+        $this->apiKeyRepository->updateLastUsedValue($api_id);
     }
-    public function activateApiKey(string $api_id, $name): void
+    public function activateApiKey(string $api_id): void
     {
-        $this->apiKeyRepository->updateLastUsedValue($api_id, $name);
+        $this->apiKeyRepository->updateLastUsedValue($api_id);
     }
-    public function deactivateApiKey(string $api_id, $name): void
+    public function deactivateApiKey(string $api_id): void
     {
-        $this->apiKeyRepository->deactivateApiKey($api_id, $name);
+        $this->apiKeyRepository->deactivateApiKey($api_id);
+    }
+    public function getAllApiKeys() : array{
+        return $this->apiKeyRepository->getAllApiKeys();
+    }
+    public function getAllApiKeysForId(string $user_id) : array{
+        return $this->apiKeyRepository->getAllApiKeysForId($user_id);
+    }
+    public function getApiKeyById(string $api_id): ApiKeyDTO
+    {
+        return $this->apiKeyRepository->getApiKeyById($api_id);
     }
 }

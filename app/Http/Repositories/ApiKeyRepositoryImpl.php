@@ -3,10 +3,12 @@
 namespace App\Http\Repositories;
 
 use App\Http\DataTransferObjects\ApiKeyDTO;
+use ArrayObject;
+use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
 use Ramsey\Uuid\Nonstandard\Uuid;
 
-class ApiKeyRepository implements ApiKeyRepositoryI
+class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
 {
     private ConnectionInterface $connection;
     public function __construct(ConnectionInterface $connection)
@@ -21,7 +23,6 @@ class ApiKeyRepository implements ApiKeyRepositoryI
         $last_used_at = null;
         $created_at = now();
         $updated_at = now();
-
         $this->connection
             ->table("tbl_users")
             ->insert([
@@ -36,20 +37,74 @@ class ApiKeyRepository implements ApiKeyRepositoryI
             ]);
         return new ApiKeyDTO($key,$name, $expires_at, $created_at);
     }
-    public function getApiKeyByIdAndName(string $api_key): ApiKeyDTO
-    {
-        // TODO: Implement getApiKeyByIdAndName() method.
-    }
     public function updateLastUsedValue(string $api_key): void
     {
-        // TODO: Implement updateLastUsedValue() method.
+        $this->connection
+            ->table("tbl_users")
+            ->where("api_key", $api_key)
+            ->update([
+                "last_used_at" => Carbon::now(),
+            ]);
     }
     public function deactivateApiKey(string $api_id): void
     {
-        // TODO: Implement deactivateApiKey() method.
+        $this->connection
+            ->table("tbl_users")
+            ->where("api_id", $api_id)
+            ->update([
+                "active" => false,
+            ]);
     }
     public function activateApiKey(string $api_id): void
     {
-        // TODO: Implement activateApiKey() method.
+        $this->connection
+            ->table("tbl_users")
+            ->where("api_id", $api_id)
+            ->update([
+                "active" => true,
+            ]);
+    }
+    public function getAllApiKeys(): array
+    {
+        $api_key_rows = new ArrayObject();
+        $collection = $this->connection
+            ->table("tbl_api_keys")
+            ->select()
+            ->get();
+        foreach($collection as $api_key) {
+            $api_key_rows->append(
+                new ApiKeyDTO($api_key->api_id,$api_key->name, Carbon::parse($api_key->expires_at),Carbon::parse($api_key->created_at))
+            );
+        }
+        return $api_key_rows->getArrayCopy();
+    }
+    public function getAllApiKeysForId(string $user_id): array
+    {
+        $api_key_rows = new ArrayObject();
+        $collection = $this->connection
+            ->table("tbl_api_keys")
+            ->select()
+            ->where("user_id", $user_id)
+            ->get();
+        foreach($collection as $api_key) {
+            $api_key_rows->append(
+                new ApiKeyDTO($api_key->api_id,$api_key->name, Carbon::parse($api_key->expires_at),Carbon::parse($api_key->created_at))
+            );
+        }
+        return $api_key_rows->getArrayCopy();
+    }
+    public function getApiKeyById(string $api_id) : ApiKeyDTO
+    {
+        $apidata = $this->connection->table("tbl_api_keys")
+            ->select()
+            ->where("api_id", $api_id)
+            ->get()
+            ->first();
+        return new ApiKeyDTO(
+            $apidata->api_id,
+            $apidata->name,
+            Carbon::parse($apidata->expired_at),
+            Carbon::parse($apidata->created_at)
+        );
     }
 }
