@@ -48,11 +48,9 @@ Route::prefix("apikeys")->group(function (){
             ->middleware("can:createAdminUsers");
     });
 });
-Route::prefix("apilogs")->group(function (){
-    Route::middleware("jwt.auth")->group(function(){
-        Route::post("add", "App\Http\Controllers\ApiKeyInfo@insertApiKeyLog")
-            ->middleware("can:createAdminUsers");
-        Route::post("getlogs", "App\Http\Controllers\ApiKeyInfo@getApiKeyLogForIdPaginated")
-            ->middleware("can:createAdminUsers");
+
+Route::middleware("api.key")->group(function(){
+    Route::prefix("events")->group(function() {
+        Route::post("registerEvent", "App\Http\Controllers\EventController@registerEvent");
     });
 });

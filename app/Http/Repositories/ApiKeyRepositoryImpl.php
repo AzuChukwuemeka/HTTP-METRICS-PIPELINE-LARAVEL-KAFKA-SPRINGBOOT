@@ -37,6 +37,55 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
             ]);
         return new ApiKeyDTO($key,$name, $expires_at, $created_at);
     }
+    public function getApiKeyById(string $api_id) : ApiKeyDTO
+    {
+        $apidata = $this->connection->table("tbl_api_keys")
+            ->select()
+            ->where("api_id", $api_id)
+            ->get()
+            ->first();
+        return new ApiKeyDTO(
+            $apidata->api_id,
+            $apidata->name,
+            Carbon::parse($apidata->expires_at),
+            Carbon::parse($apidata->created_at)
+        );
+    }
+    public function getAllApiKeysForId(string $user_id, int $pagenumber): array
+    {
+        $api_key_rows = new ArrayObject();
+        $offset = ($pagenumber - 1);
+        $collection = $this->connection
+            ->table("tbl_api_keys")
+            ->select("*")
+            ->where("user_id", $user_id)
+            ->offset($offset)
+            ->limit(10)
+            ->get() ?? [];
+        foreach($collection as $api_key) {
+            $api_key_rows->append(
+                new ApiKeyDTO($api_key->api_id,$api_key->name, Carbon::parse($api_key->expires_at),Carbon::parse($api_key->created_at))
+            );
+        }
+        return $api_key_rows->getArrayCopy();
+    }
+    public function getAllApiKeys(int $pagenumber): array
+    {
+        $offset = ($pagenumber - 1);
+        $api_key_rows = new ArrayObject();
+        $collection = $this->connection
+            ->table("tbl_api_keys")
+            ->select("*")
+            ->offset($offset)
+            ->limit(10)
+            ->get() ?? [];
+        foreach($collection as $api_key) {
+            $api_key_rows->append(
+                new ApiKeyDTO($api_key->api_id,$api_key->name, Carbon::parse($api_key->expires_at),Carbon::parse($api_key->created_at))
+            );
+        }
+        return $api_key_rows->getArrayCopy();
+    }
     public function updateLastUsedValue(string $api_key): void
     {
         $this->connection
@@ -63,54 +112,5 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
             ->update([
                 "active" => true,
             ]);
-    }
-    public function getAllApiKeys(int $pagenumber): array
-    {
-        $offset = ($pagenumber - 1);
-        $api_key_rows = new ArrayObject();
-        $collection = $this->connection
-            ->table("tbl_api_keys")
-            ->select("*")
-            ->offset($offset)
-            ->limit(10)
-            ->get();
-        foreach($collection as $api_key) {
-            $api_key_rows->append(
-                new ApiKeyDTO($api_key->api_id,$api_key->name, Carbon::parse($api_key->expires_at),Carbon::parse($api_key->created_at))
-            );
-        }
-        return $api_key_rows->getArrayCopy();
-    }
-    public function getAllApiKeysForId(string $user_id, int $pagenumber): array
-    {
-        $api_key_rows = new ArrayObject();
-        $offset = ($pagenumber - 1);
-        $collection = $this->connection
-            ->table("tbl_api_keys")
-            ->select("*")
-            ->where("user_id", $user_id)
-            ->offset($offset)
-            ->limit(10)
-            ->get();
-        foreach($collection as $api_key) {
-            $api_key_rows->append(
-                new ApiKeyDTO($api_key->api_id,$api_key->name, Carbon::parse($api_key->expires_at),Carbon::parse($api_key->created_at))
-            );
-        }
-        return $api_key_rows->getArrayCopy();
-    }
-    public function getApiKeyById(string $api_id) : ApiKeyDTO
-    {
-        $apidata = $this->connection->table("tbl_api_keys")
-            ->select()
-            ->where("api_id", $api_id)
-            ->get()
-            ->first();
-        return new ApiKeyDTO(
-            $apidata->api_id,
-            $apidata->name,
-            Carbon::parse($apidata->expired_at),
-            Carbon::parse($apidata->created_at)
-        );
     }
 }

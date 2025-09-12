@@ -17,7 +17,7 @@ return new class extends Migration
                 ->on("tbl_users")
                 ->onDelete('cascade');
             $table->string("key")->unique();
-            $table->string("name");
+            $table->string("name")->unique();
             $table->boolean("active")->nullable();
             $table->timestamp("expires_at")->nullable();
             $table->timestamp("last_used_at")->nullable();

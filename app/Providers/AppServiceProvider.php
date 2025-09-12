@@ -9,6 +9,7 @@ use App\Http\Repositories\ApiKeyRepositoryImpl;
 use App\Http\Repositories\UserRepositoryI;
 use App\Http\Repositories\UserRepositoryImpl;
 use App\Http\Services\ApiKeyService;
+use App\Http\Services\EventService;
 use App\Http\Services\UserService;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ApiKeyService::class, ApiKeyService::class);
         $this->app->bind(ApiKeyRepositoryI::class, ApiKeyRepositoryImpl::class);
         $this->app->bind(ApiKeyInfoRepositoryI::class, ApiKeyInfoRepositoryImpl::class);
+        $this->app->bind(EventService::class, EventService::class);
     }
 
     /**
