@@ -35,14 +35,13 @@ Route::prefix("users")->group(function(){
     });
 });
 
-Route::prefix("api-keys")->group(function (){
+Route::prefix("apikeys")->group(function (){
     Route::middleware("auth:api")->group(function(){
         Route::post("createKey/{name}", "App\Http\Controllers\ApiKeyController@createApiKey");
-        Route::post("getApiData/{api_id}", "App\Http\Controllers\ApiKeyController@getApiKeyById");
+        Route::post("getApiDetails/{api_id}", "App\Http\Controllers\ApiKeyController@getApiKeyById");
+        Route::post("getAllKeysForId/{user_id}", "App\Http\Controllers\ApiKeyController@getAllApiKeysForId");
 
         Route::post("getAllKeys", "App\Http\Controllers\ApiKeyController@getAllApiKeys")
-            ->middleware("can:createAdminUsers");
-        Route::post("getAllKeysForId/{user_id}", "App\Http\Controllers\ApiKeyController@getAllApiKeysForId")
             ->middleware("can:createAdminUsers");
         Route::post("deactivateKey/{api_id}", "App\Http\Controllers\ApiKeyController@deactivateApiKey")
             ->middleware("can:createAdminUsers");
@@ -50,4 +49,11 @@ Route::prefix("api-keys")->group(function (){
             ->middleware("can:createAdminUsers");
     });
 });
-
+Route::prefix("apilogs")->group(function (){
+    Route::middleware("auth:api")->group(function(){
+        Route::post("add", "App\Http\Controllers\ApiKeyInfo@insertApiKeyLog")
+            ->middleware("can:createAdminUsers");
+        Route::post("getlogs", "App\Http\Controllers\ApiKeyInfo@getApiKeyLogForIdPaginated")
+            ->middleware("can:createAdminUsers");
+    });
+});

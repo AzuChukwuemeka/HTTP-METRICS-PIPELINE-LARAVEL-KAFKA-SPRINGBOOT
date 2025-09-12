@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use App\Http\Repositories\ApiKeyRepository;
+use App\Http\Repositories\ApiKeyInfoRepositoryI;
+use App\Http\Repositories\ApiKeyInfoRepositoryImpl;
 use App\Http\Repositories\ApiKeyRepositoryI;
 use App\Http\Repositories\ApiKeyRepositoryImpl;
 use App\Http\Repositories\UserRepositoryI;
@@ -24,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryI::class, UserRepositoryImpl::class);
         $this->app->bind(ApiKeyService::class, ApiKeyService::class);
         $this->app->bind(ApiKeyRepositoryI::class, ApiKeyRepositoryImpl::class);
-        //
+        $this->app->bind(ApiKeyInfoRepositoryI::class, ApiKeyInfoRepositoryImpl::class);
     }
 
     /**

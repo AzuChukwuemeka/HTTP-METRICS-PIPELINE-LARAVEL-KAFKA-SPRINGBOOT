@@ -38,11 +38,11 @@ class ApiKeyService
     {
         $this->apiKeyRepository->deactivateApiKey($api_id);
     }
-    public function getAllApiKeys() : array{
-        return $this->apiKeyRepository->getAllApiKeys();
+    public function getAllApiKeys(int $pagenumber) : array{
+        return $this->apiKeyRepository->getAllApiKeys($pagenumber);
     }
-    public function getAllApiKeysForId(string $user_id) : array{
-        return $this->apiKeyRepository->getAllApiKeysForId($user_id);
+    public function getAllApiKeysForId(string $user_id, int $pagenumber) : array{
+        return $this->apiKeyRepository->getAllApiKeysForId($user_id, $pagenumber);
     }
     public function getApiKeyById(string $api_id): ApiKeyDTO
     {

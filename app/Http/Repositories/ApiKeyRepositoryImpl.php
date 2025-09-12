@@ -64,7 +64,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
                 "active" => true,
             ]);
     }
-    public function getAllApiKeys(): array
+    public function getAllApiKeys(int $pagenumber): array
     {
         $api_key_rows = new ArrayObject();
         $collection = $this->connection
@@ -78,13 +78,16 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
         }
         return $api_key_rows->getArrayCopy();
     }
-    public function getAllApiKeysForId(string $user_id): array
+    public function getAllApiKeysForId(string $user_id, int $pagenumber): array
     {
         $api_key_rows = new ArrayObject();
+        $offset = ($pagenumber - 1);
         $collection = $this->connection
             ->table("tbl_api_keys")
             ->select()
             ->where("user_id", $user_id)
+            ->offset($offset)
+            ->limit(10)
             ->get();
         foreach($collection as $api_key) {
             $api_key_rows->append(

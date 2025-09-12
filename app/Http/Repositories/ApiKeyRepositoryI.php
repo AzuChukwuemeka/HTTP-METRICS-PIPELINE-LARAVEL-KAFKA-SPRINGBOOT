@@ -9,9 +9,10 @@ interface ApiKeyRepositoryI
 {
     public function createApiKey(string $user_id, string $name) : ApiKeyDTO;
     public function getApiKeyById(string $api_id) : ApiKeyDTO;
-    public function getAllApiKeys(): array;
-    public function getAllApiKeysForId(string $user_id): array;
+    public function getAllApiKeys(int $pagenumber): array;
+    public function getAllApiKeysForId(string $user_id, int $pagenumber): array;
     public function updateLastUsedValue(string $api_key) : void;
     public function deactivateApiKey(string $api_id) : void;
-    public function activateApiKey(string $api_id) : void;
+    public function
+    activateApiKey(string $api_id) : void;
 }

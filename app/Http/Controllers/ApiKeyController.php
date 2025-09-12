@@ -32,13 +32,15 @@ class ApiKeyController extends Controller
         ]);
     }
     public function getAllApiKeys() : JsonResponse{
-        $allApiKeys = $this->apiKeyService->getAllApiKeys();
+        $pagenumber = request()->query("pagenumber") ?? 1;
+        $allApiKeys = $this->apiKeyService->getAllApiKeys($pagenumber);
         return response()->json([
             "data" => $allApiKeys,
         ]);
     }
     public function getAllApiKeysForId(string $user_id) : JsonResponse{
-        $allApiKeys = $this->apiKeyService->getAllApiKeysForId($user_id);
+        $pagenumber = request()->query("pagenumber") ?? 1;
+        $allApiKeys = $this->apiKeyService->getAllApiKeysForId($user_id, $pagenumber);
         return response()->json([
             "data" => $allApiKeys,
         ]);
