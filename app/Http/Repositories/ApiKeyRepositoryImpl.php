@@ -24,7 +24,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
         $created_at = now();
         $updated_at = now();
         $this->connection
-            ->table("tbl_users")
+            ->table("tbl_api_keys")
             ->insert([
                 "api_id" => $api_id,
                 "user_id" => $user_id,
@@ -40,7 +40,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
     public function updateLastUsedValue(string $api_key): void
     {
         $this->connection
-            ->table("tbl_users")
+            ->table("tbl_api_keys")
             ->where("api_key", $api_key)
             ->update([
                 "last_used_at" => Carbon::now(),
@@ -49,7 +49,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
     public function deactivateApiKey(string $api_id): void
     {
         $this->connection
-            ->table("tbl_users")
+            ->table("tbl_api_keys")
             ->where("api_id", $api_id)
             ->update([
                 "active" => false,
@@ -58,7 +58,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
     public function activateApiKey(string $api_id): void
     {
         $this->connection
-            ->table("tbl_users")
+            ->table("tbl_api_keys")
             ->where("api_id", $api_id)
             ->update([
                 "active" => true,
@@ -66,10 +66,13 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
     }
     public function getAllApiKeys(int $pagenumber): array
     {
+        $offset = ($pagenumber - 1);
         $api_key_rows = new ArrayObject();
         $collection = $this->connection
             ->table("tbl_api_keys")
-            ->select()
+            ->select("*")
+            ->offset($offset)
+            ->limit(10)
             ->get();
         foreach($collection as $api_key) {
             $api_key_rows->append(
@@ -84,7 +87,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepositoryI
         $offset = ($pagenumber - 1);
         $collection = $this->connection
             ->table("tbl_api_keys")
-            ->select()
+            ->select("*")
             ->where("user_id", $user_id)
             ->offset($offset)
             ->limit(10)

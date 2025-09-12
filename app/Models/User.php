@@ -21,6 +21,9 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'user_id',
+        'email_verified_at',
+        'ROLES',
     ];
 
     protected $hidden = [
@@ -40,13 +43,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-    public function isanAdmin() : Boolean{
-        $roles = json_decode($this->roles);
-        foreach($roles as $role){
-            if(strtoupper($role) == "ADMIN"){
-                return true;
-            }
-        }
-        return false;
+    public function isanAdmin() : bool{
+        $roles = json_decode($this->ROLES) ?? [];
+        return in_array("USER", $roles);
     }
 }

@@ -93,6 +93,7 @@ class Handler extends ExceptionHandler
             ]);
         }
         echo $e::class . PHP_EOL;
+//        echo $e->getTraceAsString() . PHP_EOL;
         return response()->json([
             "Error" => "Internal Server Error",
             "Message" => $e->getMessage()
